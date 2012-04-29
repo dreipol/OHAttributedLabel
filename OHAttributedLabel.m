@@ -522,9 +522,15 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-	NSMutableAttributedString* attrStrWithLinks = [self attributedTextWithLinks];
-	if (!attrStrWithLinks) return CGSizeZero;
-	return [attrStrWithLinks sizeConstrainedToSize:size fitRange:NULL];
+	if (_attributedText) {
+		NSMutableAttributedString* attrStrWithLinks = [self attributedTextWithLinks];
+		if (!attrStrWithLinks) return CGSizeZero;
+		return [attrStrWithLinks sizeConstrainedToSize:size fitRange:NULL];
+		
+	}else
+	{
+		return [super sizeThatFits:size];
+	}
 }
 
 
@@ -566,13 +572,6 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 
 
 /////////////////////////////////////////////////////////////////////////////
-
--(void)setText:(NSString *)text {
-	NSString* cleanedText = [[text stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"]
-							 stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	[super setText:cleanedText]; // will call setNeedsDisplay too
-	[self resetAttributedText];
-}
 -(void)setFont:(UIFont *)font {
 	[_attributedText setFont:font];
 	[super setFont:font]; // will call setNeedsDisplay too
